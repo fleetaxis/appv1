@@ -5,13 +5,7 @@
 // GET /api/lookup?usdot=2589042
 // GET /api/lookup?mc=907873
 
-import {
-  FmcsaAuthenticationError,
-  FmcsaUpstreamError,
-  MissingFmcsaWebKeyError,
-  lookupByDOT,
-  lookupByMC,
-} from '../lib/fmcsa.js';
+import { FmcsaAuthenticationError, MissingFmcsaWebKeyError, lookupByDOT, lookupByMC } from '../lib/fmcsa.js';
 
 function getRequestUrl(request) {
   const forwardedProto = request.headers['x-forwarded-proto']?.split(',')[0]?.trim();
@@ -55,14 +49,29 @@ export default async function handler(request, response) {
   }
 
   try {
-    const result = query.type === 'usdot'
-      ? await lookupByDOT(query.value)
-      : await lookupByMC(query.value);
+    let result;
+    let queryLabel;
+    if (usdot) {
+      queryLabel = `USDOT ${usdot}`;
+      result = await lookupByDOT(usdot);
+
+      // Users often paste an MC docket number into the default USDOT tab. If a
+      // numeric USDOT lookup misses, try the same number as an MC docket before
+      // surfacing a 404. This fixes cases such as /api/lookup?usdot=1031013
+      // when the intended identifier is MC-1031013.
+      if (!result) {
+        result = await lookupByMC(usdot);
+        if (result) queryLabel = `MC-${usdot}`;
+      }
+    } else {
+      queryLabel = `MC-${mc}`;
+      result = await lookupByMC(mc);
+    }
 
     if (!result) {
       return sendJson(response, 404, {
         error: 'Carrier not found',
-        query: query.label,
+        query: queryLabel,
       });
     }
 
@@ -99,6 +108,17 @@ export default async function handler(request, response) {
 
     console.error('Lookup error:', error);
     return sendJson(response, 500, {
+    if (err instanceof FmcsaAuthenticationError || err.code === 'FMCSA_AUTHENTICATION_FAILED') {
+      console.error('Lookup authentication error:', err.message);
+      return response.status(503).json({
+        error: 'Lookup service authentication failed',
+        code: err.code,
+        message: 'FMCSA rejected the configured webkey. Verify the value of FMCSA_WEBKEY in Vercel Project Settings → Environment Variables, then redeploy.',
+      });
+    }
+
+    console.error('Lookup error:', err);
+    return response.status(500).json({
       error: 'Lookup failed',
       message: error.message,
     });
