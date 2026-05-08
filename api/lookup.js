@@ -55,6 +55,15 @@ export default async function handler(request, response) {
     if (usdot) {
       queryLabel = `USDOT ${usdot}`;
       result = await lookupByDOT(usdot);
+
+      // Users often paste an MC docket number into the default USDOT tab. If a
+      // numeric USDOT lookup misses, try the same number as an MC docket before
+      // surfacing a 404. This fixes cases such as /api/lookup?usdot=1031013
+      // when the intended identifier is MC-1031013.
+      if (!result) {
+        result = await lookupByMC(usdot);
+        if (result) queryLabel = `MC-${usdot}`;
+      }
     } else {
       queryLabel = `MC-${mc}`;
       result = await lookupByMC(mc);
