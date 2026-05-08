@@ -13,5 +13,6 @@
   },
   "dependencies": {
     "@vercel/postgres": "^0.10.0"
-  }
+  },
+  "type": "module"
 }

@@ -10,6 +10,18 @@
 
 import { lookupByDOT, lookupByMC } from '../lib/fmcsa.js';
 
+function getRequestUrl(request) {
+  const forwardedProto = request.headers['x-forwarded-proto']?.split(',')[0]?.trim();
+  const protocol = forwardedProto || 'https';
+  const host = request.headers.host || 'localhost';
+
+  return new URL(request.url, `${protocol}://${host}`);
+}
+
+function getFirstQueryParam(request, name) {
+  return getRequestUrl(request).searchParams.get(name);
+}
+
 export default async function handler(request, response) {
   // Allow our frontend to call this from the browser
   response.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,7 +37,10 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { usdot, mc } = request.query;
+  // Parse query params with the WHATWG URL API instead of relying on
+  // framework-provided query parsing that can trigger Node's DEP0169 warning.
+  const usdot = getFirstQueryParam(request, 'usdot');
+  const mc = getFirstQueryParam(request, 'mc');
 
   // Must provide one or the other
   if (!usdot && !mc) {
