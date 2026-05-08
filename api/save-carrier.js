@@ -12,7 +12,7 @@
 // Once we add proper user accounts (next milestone), we'll migrate this
 // to use user_id and merge the saved_carriers rows.
 
-import { sql } from '@vercel/postgres';
+import { db, ensureSavedCarriersTable } from '../lib/db.js';
 
 function isValidEmail(email) {
   if (!email || typeof email !== 'string') return false;
@@ -57,8 +57,10 @@ export default async function handler(request, response) {
 
     const cleanEmail = email.trim().toLowerCase();
 
+    await ensureSavedCarriersTable();
+
     // Auto-add the email to subscribers too (they want monitoring → they're a subscriber)
-    await sql`
+    await db`
       INSERT INTO subscribers (email, source, context_dot_number)
       VALUES (${cleanEmail}, 'watch_carrier', ${cleanDot})
       ON CONFLICT (email) DO NOTHING
@@ -68,7 +70,7 @@ export default async function handler(request, response) {
     const snapshotStatus = snapshot?.carrier?.statusCode || null;
     const snapshotAllowed = snapshot?.carrier?.allowedToOperate || null;
 
-    await sql`
+    await db`
       INSERT INTO saved_carriers (
         email, dot_number, carrier_name, notes,
         snapshot_status, snapshot_allowed_to_operate, snapshot_data
