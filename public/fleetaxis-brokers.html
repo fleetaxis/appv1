@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050507">
+<title>FleetAxis for Brokers — Onboard faster. Stop fraud. Move freight.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg-elev: #0D0D12;
+    --bg-card: #111118;
+    --bg-charcoal: #1A1A24;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #F8F8FB;
+    --text-dim: #B8B8C8;
+    --text-faint: #5C5C6E;
+    --accent: #7C3AED;
+    --accent-hot: #9333EA;
+    --accent-deep: #5B21B6;
+    --accent-bright: #A855F7;
+    --accent-electric: #C084FC;
+    --success: #6EE7B7;
+    --warn: #FBBF24;
+    --danger: #FB7185;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; background-color: #050507 !important; color-scheme: dark; }
+  html, body { background-color: #050507 !important; }
+  body {
+    background: #050507 !important;
+    color: #F8F8FB;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  ::selection { background: var(--accent); color: white; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(5,5,7,0.85);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 17px; color: #FFFFFF;
+    text-decoration: none; letter-spacing: -0.01em;
+  }
+  .logo-mark { width: 26px; height: 26px; }
+  .breadcrumb {
+    font-family: 'Geist Mono', monospace; font-size: 12px;
+    color: var(--text-faint); margin-left: 12px;
+    padding-left: 14px; border-left: 1px solid var(--border-strong);
+  }
+  .breadcrumb span { color: var(--accent-electric); }
+  .nav-links { display: flex; gap: 34px; list-style: none; font-size: 14px; color: var(--text-dim); }
+  .nav-links a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: #FFFFFF; }
+  .nav-links a.active { color: var(--accent-electric); }
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+  .btn { font-family: inherit; font-size: 14px; font-weight: 500; padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: none; }
+  .btn-ghost { background: transparent; color: var(--text-dim); }
+  .btn-ghost:hover { color: #FFFFFF; }
+  .btn-primary { background: #FFFFFF; color: var(--bg); font-weight: 600; }
+  .btn-primary:hover { background: var(--accent-electric); }
+  .btn-accent { background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); color: white; font-weight: 600; box-shadow: 0 0 0 1px rgba(168,85,247,0.4), 0 8px 28px -6px rgba(124,58,237,0.7); }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(168,85,247,0.6), 0 14px 36px -6px rgba(124,58,237,0.9); }
+  .btn-large { padding: 14px 24px; font-size: 15px; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 130px 48px 80px;
+    min-height: 88vh;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+    align-items: center;
+    overflow: hidden;
+    background-color: #050507;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -10%; right: -10%;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(124,58,237,0.22) 0%, transparent 60%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -20%; left: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(91,33,182,0.18) 0%, transparent 60%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .grid-overlay {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 2; animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-electric);
+    padding: 6px 12px; border: 1px solid rgba(168,85,247,0.5); border-radius: 100px;
+    background: rgba(124,58,237,0.15); margin-bottom: 24px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.15);
+  }
+  .eyebrow-dot { width: 6px; height: 6px; background: var(--accent-electric); border-radius: 50%; animation: pulse 2s ease-in-out infinite; box-shadow: 0 0 8px rgba(192,132,252,0.8); }
+  @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(192,132,252,0.6), 0 0 8px rgba(192,132,252,0.8); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(192,132,252,0), 0 0 8px rgba(192,132,252,0.8); } }
+  h1 {
+    font-family: 'Geist', sans-serif;
+    font-size: clamp(44px, 5.5vw, 72px); font-weight: 600;
+    line-height: 0.98; letter-spacing: -0.035em; color: #FFFFFF; margin-bottom: 24px;
+  }
+  h1 em {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-style: italic; font-weight: 400;
+    color: var(--accent-electric);
+    background: linear-gradient(135deg, #C084FC 0%, #7C3AED 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(192,132,252,0.4));
+  }
+  .hero-sub { font-size: 19px; color: var(--text-dim); line-height: 1.55; max-width: 540px; margin-bottom: 36px; }
+  .hero-cta { display: flex; gap: 12px; align-items: center; margin-bottom: 48px; }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    max-width: 540px; padding-top: 32px; border-top: 1px solid var(--border);
+  }
+  .hero-stat-num {
+    font-family: 'Geist', sans-serif; font-size: 32px; font-weight: 600;
+    color: #FFFFFF; letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px;
+  }
+  .hero-stat-num em { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent-electric); font-weight: 400; }
+  .hero-stat-label {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* HERO MOCKUP — PIPELINE LIVE FEED */
+  .pipeline-feed {
+    position: relative; z-index: 2;
+    background: #0A0A10; border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 16px;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(168,85,247,0.15);
+    overflow: hidden;
+    animation: fadeIn 1.4s 0.3s ease-out backwards;
+  }
+  .pipeline-feed::before {
+    content: ''; position: absolute; inset: -1px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.4), transparent 40%, transparent 60%, rgba(124,58,237,0.3));
+    border-radius: 16px; z-index: -1; filter: blur(20px); opacity: 0.6;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+  .pf-titlebar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+  .pf-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+  .pf-url { margin-left: 10px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .pf-h {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(124,58,237,0.04);
+  }
+  .pf-title { font-size: 15px; font-weight: 600; color: #FFFFFF; }
+  .pf-counts {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    color: var(--text-faint);
+    display: flex; gap: 16px;
+  }
+  .pf-counts strong { color: #FFFFFF; font-weight: 600; }
+  .pf-counts .live { color: var(--success); display: flex; align-items: center; gap: 6px; }
+  .pf-counts .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px rgba(110,231,183,0.7); animation: pulse 2s infinite; }
+  .pf-row {
+    display: grid; grid-template-columns: 28px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pf-row:last-child { border-bottom: none; }
+  .pf-row-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600;
+  }
+  .pf-row-icon.in-progress { background: rgba(251,191,36,0.12); color: var(--warn); border: 1px solid rgba(251,191,36,0.3); }
+  .pf-row-icon.review { background: rgba(168,85,247,0.12); color: var(--accent-electric); border: 1px solid rgba(168,85,247,0.3); }
+  .pf-row-icon.approved { background: rgba(110,231,183,0.12); color: var(--success); border: 1px solid rgba(110,231,183,0.3); }
+  .pf-row-icon.flag { background: rgba(251,113,133,0.12); color: var(--danger); border: 1px solid rgba(251,113,133,0.3); }
+  .pf-row-name {
+    font-size: 13px; color: #FFFFFF; font-weight: 500; margin-bottom: 3px;
+  }
+  .pf-row-meta {
+    font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint);
+  }
+  .pf-row-time {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    color: var(--text-dim); white-space: nowrap;
+  }
+  .pf-row-time.warn { color: var(--warn); }
+  .pf-row-time.success { color: var(--success); }
+  .pf-row-time.danger { color: var(--danger); }
+  .pf-row-time.purple { color: var(--accent-electric); }
+
+  /* SECTIONS */
+  section { padding: 110px 48px; position: relative; background-color: #050507; }
+  section.charcoal { background-color: var(--bg-charcoal); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .section-head { max-width: 760px; margin: 0 auto 64px; text-align: center; position: relative; }
+  .section-eyebrow {
+    font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-electric);
+    margin-bottom: 18px; text-shadow: 0 0 20px rgba(192,132,252,0.4);
+  }
+  h2 { font-family: 'Geist', sans-serif; font-size: clamp(34px, 4.2vw, 52px); font-weight: 600; line-height: 1.05; letter-spacing: -0.03em; color: #FFFFFF; margin-bottom: 18px; }
+  h2 em { font-family: 'Instrument Serif', 'Times New Roman', serif; font-style: italic; font-weight: 400; color: var(--accent-electric); text-shadow: 0 0 30px rgba(192,132,252,0.4); }
+  .section-sub { font-size: 17px; color: var(--text-dim); line-height: 1.55; }
+
+  /* KANBAN */
+  .kanban-frame {
+    max-width: 1340px;
+    margin: 0 auto;
+    background: #0A0A10;
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(168,85,247,0.15);
+    position: relative;
+  }
+  .kanban-frame::before {
+    content: ''; position: absolute; inset: -2px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.4), transparent 40%, transparent 60%, rgba(124,58,237,0.3));
+    border-radius: 16px; z-index: -1; filter: blur(24px); opacity: 0.5;
+  }
+  .kanban-h {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .kanban-title-group { display: flex; align-items: center; gap: 14px; }
+  .kanban-title { font-size: 16px; color: #FFFFFF; font-weight: 600; }
+  .kanban-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .kanban-actions { display: flex; gap: 8px; }
+  .kanban-btn {
+    font-family: 'Geist', sans-serif; font-size: 12px;
+    padding: 7px 13px; border-radius: 6px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border-strong);
+    color: var(--text); cursor: pointer; text-decoration: none;
+  }
+  .kanban-btn.purple { background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); border: none; color: white; font-weight: 500; }
+  .kanban-cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    min-height: 580px;
+  }
+  .kanban-col {
+    background: #0F0F18;
+    padding: 16px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .kanban-col-h {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 6px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .kanban-col-name {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+  }
+  .kanban-col-name.invited { color: var(--text-dim); }
+  .kanban-col-name.in-progress { color: var(--warn); }
+  .kanban-col-name.review { color: var(--accent-electric); }
+  .kanban-col-name.approved { color: var(--success); }
+  .kanban-col-count {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    color: var(--text-faint);
+    padding: 2px 8px; border-radius: 100px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  }
+  .kanban-card {
+    background: #14141F;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .kanban-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .kanban-card.flagged {
+    border-color: rgba(251,113,133,0.4);
+    background: linear-gradient(180deg, rgba(251,113,133,0.04) 0%, #14141F 100%);
+  }
+  .kanban-card.priority {
+    border-color: rgba(168,85,247,0.4);
+  }
+  .kanban-card-h {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .kanban-carrier-name {
+    font-size: 13px; color: #FFFFFF; font-weight: 500;
+  }
+  .kanban-mc {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    color: var(--text-faint);
+  }
+  .kanban-progress {
+    display: flex; gap: 3px; margin-bottom: 8px;
+  }
+  .kanban-progress-seg {
+    flex: 1; height: 3px; border-radius: 2px;
+  }
+  .kanban-progress-seg.done { background: var(--accent-electric); box-shadow: 0 0 4px rgba(192,132,252,0.5); }
+  .kanban-progress-seg.pending { background: rgba(255,255,255,0.08); }
+  .kanban-progress-seg.flagged { background: var(--danger); }
+  .kanban-tags {
+    display: flex; flex-wrap: wrap; gap: 5px;
+  }
+  .kanban-tag {
+    font-family: 'Geist Mono', monospace; font-size: 9px;
+    padding: 2px 6px; border-radius: 3px;
+    border: 1px solid;
+  }
+  .kanban-tag.success { color: var(--success); background: rgba(110,231,183,0.06); border-color: rgba(110,231,183,0.25); }
+  .kanban-tag.warn { color: var(--warn); background: rgba(251,191,36,0.06); border-color: rgba(251,191,36,0.25); }
+  .kanban-tag.danger { color: var(--danger); background: rgba(251,113,133,0.06); border-color: rgba(251,113,133,0.25); }
+  .kanban-tag.muted { color: var(--text-faint); background: rgba(255,255,255,0.02); border-color: var(--border); }
+  .kanban-time {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    color: var(--text-faint); margin-top: 8px;
+    display: flex; justify-content: space-between;
+  }
+
+  /* PACKET WORKFLOW (split view) */
+  .packet-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .packet-side {
+    background: #0A0A10;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(168,85,247,0.12);
+  }
+  .packet-side-h {
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .packet-side-tag {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 4px; font-weight: 600;
+  }
+  .packet-side-tag.broker { color: var(--accent-electric); background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); }
+  .packet-side-tag.carrier { color: var(--success); background: rgba(110,231,183,0.12); border: 1px solid rgba(110,231,183,0.3); }
+  .packet-side-name { font-size: 13px; color: #FFFFFF; font-weight: 500; }
+  .packet-body { padding: 20px 22px; }
+  .packet-step {
+    display: grid; grid-template-columns: 28px 1fr auto;
+    gap: 12px; align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .packet-step:last-child { border-bottom: none; }
+  .packet-step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600;
+    color: var(--accent-electric);
+  }
+  .packet-step-num.done {
+    background: rgba(110,231,183,0.12); border-color: rgba(110,231,183,0.4);
+    color: var(--success);
+  }
+  .packet-step-info { min-width: 0; }
+  .packet-step-title { font-size: 13px; color: #FFFFFF; font-weight: 500; margin-bottom: 2px; }
+  .packet-step-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .packet-step-status {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    padding: 3px 8px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .packet-step-status.done { color: var(--success); background: rgba(110,231,183,0.08); }
+  .packet-step-status.active { color: var(--accent-electric); background: rgba(168,85,247,0.08); }
+  .packet-step-status.pending { color: var(--text-faint); background: rgba(255,255,255,0.03); }
+
+  /* FRAUD DETECTION */
+  .fraud-frame {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(251,113,133,0.04) 0%, #0A0A10 100%);
+    border: 1px solid rgba(251,113,133,0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(251,113,133,0.15);
+  }
+  .fraud-h {
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(251,113,133,0.2);
+    background: rgba(251,113,133,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .fraud-h-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 15px; color: var(--danger); font-weight: 600;
+  }
+  .fraud-h-title svg { color: var(--danger); }
+  .fraud-h-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .fraud-body { padding: 24px 28px; }
+  .fraud-carrier-h {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 18px; margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .fraud-carrier-name { font-size: 19px; font-weight: 600; color: #FFFFFF; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .fraud-carrier-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .fraud-grade {
+    font-size: 28px; font-weight: 600; color: var(--danger);
+    letter-spacing: -0.02em; line-height: 1;
+  }
+  .fraud-grade-label {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    color: var(--text-faint); letter-spacing: 0.1em; margin-top: 4px;
+    text-align: right;
+  }
+  .fraud-flags { display: flex; flex-direction: column; gap: 12px; }
+  .fraud-flag {
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 14px; align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: rgba(251,113,133,0.06);
+    border: 1px solid rgba(251,113,133,0.25);
+  }
+  .fraud-flag-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(251,113,133,0.18); color: var(--danger);
+    border: 1px solid rgba(251,113,133,0.4);
+  }
+  .fraud-flag-title {
+    font-size: 13px; color: #FFFFFF; font-weight: 500; margin-bottom: 3px;
+  }
+  .fraud-flag-desc {
+    font-family: 'Geist Mono', monospace; font-size: 11px;
+    color: var(--text-dim); line-height: 1.5;
+  }
+  .fraud-flag-desc strong { color: var(--danger); font-weight: 600; }
+  .fraud-actions {
+    display: flex; gap: 10px; margin-top: 22px;
+  }
+  .fraud-action-btn {
+    flex: 1; padding: 11px;
+    border-radius: 8px; font-family: inherit;
+    font-size: 13px; font-weight: 600;
+    text-align: center; cursor: pointer; text-decoration: none;
+  }
+  .fraud-action-btn.danger { background: rgba(251,113,133,0.15); color: var(--danger); border: 1px solid rgba(251,113,133,0.4); }
+  .fraud-action-btn.muted { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid var(--border-strong); }
+
+  /* MONITORING */
+  .monitor-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .copy-block h3 {
+    font-size: 28px; font-weight: 600; color: #FFFFFF;
+    letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px;
+  }
+  .copy-block h3 em {
+    font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400;
+    color: var(--accent-electric);
+  }
+  .copy-block p { font-size: 16px; color: var(--text-dim); line-height: 1.6; margin-bottom: 22px; }
+  .feature-list { list-style: none; }
+  .feature-list li {
+    display: flex; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 14px; color: var(--text);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent-electric); border-radius: 50%;
+    margin-top: 8px; box-shadow: 0 0 8px rgba(192,132,252,0.7);
+    flex-shrink: 0;
+  }
+  .feature-list li strong { color: #FFFFFF; font-weight: 500; margin-right: 6px; }
+
+  .monitor-mockup {
+    background: #0A0A10;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(168,85,247,0.12);
+  }
+  .monitor-mockup-h {
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .monitor-mockup-title { font-size: 14px; color: #FFFFFF; font-weight: 500; }
+  .monitor-mockup-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 6px; }
+  .monitor-mockup-meta::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px rgba(110,231,183,0.7); }
+  .monitor-event {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .monitor-event:last-child { border-bottom: none; }
+  .monitor-event-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .monitor-event-icon.warn { background: rgba(251,191,36,0.12); color: var(--warn); border: 1px solid rgba(251,191,36,0.3); }
+  .monitor-event-icon.danger { background: rgba(251,113,133,0.12); color: var(--danger); border: 1px solid rgba(251,113,133,0.3); }
+  .monitor-event-icon.purple { background: rgba(168,85,247,0.12); color: var(--accent-electric); border: 1px solid rgba(168,85,247,0.3); }
+  .monitor-event-icon.success { background: rgba(110,231,183,0.12); color: var(--success); border: 1px solid rgba(110,231,183,0.3); }
+  .monitor-event-title {
+    font-size: 13px; color: #FFFFFF; font-weight: 500; margin-bottom: 2px;
+  }
+  .monitor-event-meta { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+  .monitor-event-time { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+
+  /* INTEGRATIONS */
+  .integrations-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .integration-card {
+    background: #0A0A10;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 18px;
+    transition: all 0.3s;
+    text-align: center;
+  }
+  .integration-card:hover {
+    border-color: rgba(168,85,247,0.4);
+    transform: translateY(-2px);
+  }
+  .integration-name {
+    font-size: 14px; color: #FFFFFF; font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .integration-type {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .integration-status {
+    font-family: 'Geist Mono', monospace; font-size: 10px;
+    padding: 3px 8px; border-radius: 100px;
+    background: rgba(110,231,183,0.06); color: var(--success);
+    border: 1px solid rgba(110,231,183,0.25);
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .integration-status::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--success);
+    box-shadow: 0 0 4px rgba(110,231,183,0.7);
+  }
+
+  /* CTA */
+  .cta {
+    padding: 130px 48px; text-align: center;
+    position: relative; overflow: hidden;
+    background-color: #050507;
+  }
+  .cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(124,58,237,0.3) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cta-inner { max-width: 720px; margin: 0 auto; position: relative; }
+  .cta-form {
+    display: flex; gap: 8px; max-width: 480px; margin: 32px auto 0;
+    padding: 6px; background: var(--bg-card);
+    border: 1px solid var(--border-strong); border-radius: 14px;
+  }
+  .cta-form input {
+    flex: 1; background: transparent; border: none; padding: 12px 14px;
+    color: var(--text); font-family: 'Geist Mono', monospace; font-size: 14px; outline: none;
+  }
+  .cta-form input::placeholder { color: var(--text-faint); }
+  .cta-form button {
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+    color: white; border: none;
+    padding: 0 22px; border-radius: 10px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    box-shadow: 0 6px 20px -4px rgba(124,58,237,0.7);
+  }
+  .cta-tag { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); margin-top: 16px; letter-spacing: 0.05em; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 48px 48px 32px; }
+  .footer-grid { max-width: 1280px; margin: 0 auto 36px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+  .footer-tag { font-size: 13px; color: var(--text-dim); margin-top: 14px; line-height: 1.55; max-width: 320px; }
+  .footer-col h4 { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+  .footer-col ul { list-style: none; }
+  .footer-col li { padding: 4px 0; }
+  .footer-col a { color: var(--text-dim); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+  .footer-col a:hover { color: #FFFFFF; }
+  .footer-bottom { max-width: 1280px; margin: 0 auto; padding-top: 28px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); }
+
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; gap: 48px; }
+    .monitor-grid { grid-template-columns: 1fr; gap: 32px; }
+    .packet-grid { grid-template-columns: 1fr; }
+    .kanban-cols { grid-template-columns: 1fr 1fr; }
+    .integrations-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .breadcrumb { display: none; }
+    .hero { padding: 110px 24px 60px; }
+    section { padding: 70px 24px; }
+    .hero-stats { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .kanban-cols { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .cta { padding: 70px 24px; }
+    .cta-form { flex-direction: column; }
+    .fraud-actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body style="background: #050507; color: #F8F8FB; margin: 0;">
+
+<!-- NAV -->
+<nav>
+  <div style="display: flex; align-items: center;">
+    <a href="/" class="logo">
+      <img class="logo-mark" src="logo.png" alt="FleetAxis" width="28" height="28" style="border-radius: 6px;">
+      FleetAxis
+    </a>
+    <div class="breadcrumb">For <span>Brokers</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Carriers</a></li>
+    <li><a href="#" class="active">Brokers</a></li>
+    <li><a href="#">Shippers</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Resources</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#cta" class="btn btn-primary">Book demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-overlay"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>FleetAxis · For Brokers</div>
+    <h1>Onboard faster.<br>Stop fraud.<br>Move <em>freight</em>.</h1>
+    <p class="hero-sub">
+      Onboard a new carrier in 90 seconds. Block double-brokering before it happens. Live insurance, authority, and identity sync — every load, every carrier, every time.
+    </p>
+    <div class="hero-cta">
+      <a href="#cta" class="btn btn-accent btn-large">
+        Book a 15-min demo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8m0 0L7 3m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="#pipeline" class="btn btn-ghost btn-large">See the pipeline →</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">90<em>s</em></div>
+        <div class="hero-stat-label">Median onboard</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">$2.8<em>B</em></div>
+        <div class="hero-stat-label">Annual fraud loss</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Live FMCSA sync</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline live feed -->
+  <div class="pipeline-feed">
+    <div class="pf-titlebar">
+      <span class="pf-dot"></span><span class="pf-dot"></span><span class="pf-dot"></span>
+      <span class="pf-url">app.fleetaxis.com / broker / pipeline</span>
+    </div>
+    <div class="pf-h">
+      <div class="pf-title">Onboarding pipeline · today</div>
+      <div class="pf-counts">
+        <span><strong>14</strong> active</span>
+        <span><strong>9</strong> approved</span>
+        <span class="live">live</span>
+      </div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-row-icon approved">✓</div>
+      <div>
+        <div class="pf-row-name">Roadrunner Express LLC</div>
+        <div class="pf-row-meta">USDOT 4892017 · MC-921843 · approved</div>
+      </div>
+      <div class="pf-row-time success">2m ago</div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-row-icon review">!</div>
+      <div>
+        <div class="pf-row-name">Eastern Logistics Group</div>
+        <div class="pf-row-meta">USDOT 3712840 · awaiting your review</div>
+      </div>
+      <div class="pf-row-time purple">→ review</div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-row-icon flag">×</div>
+      <div>
+        <div class="pf-row-name">National Trans Co.</div>
+        <div class="pf-row-meta">USDOT 5621093 · 3 fraud signals detected</div>
+      </div>
+      <div class="pf-row-time danger">flagged</div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-row-icon in-progress">⋯</div>
+      <div>
+        <div class="pf-row-name">Lone Star Hauling</div>
+        <div class="pf-row-meta">USDOT 2914872 · COI requested · waiting</div>
+      </div>
+      <div class="pf-row-time warn">22m</div>
+    </div>
+    <div class="pf-row">
+      <div class="pf-row-icon approved">✓</div>
+      <div>
+        <div class="pf-row-name">Apex Freight Services</div>
+        <div class="pf-row-meta">USDOT 1843772 · MC-672901 · approved</div>
+      </div>
+      <div class="pf-row-time success">1h ago</div>
+    </div>
+  </div>
+</section>
+
+<!-- KANBAN PIPELINE -->
+<section id="pipeline">
+  <div class="section-head">
+    <div class="section-eyebrow">The Onboarding Pipeline</div>
+    <h2>Every carrier.<br>Every <em>stage</em>. One board.</h2>
+    <p class="section-sub">A live Kanban view of every carrier moving through onboarding. Red flags surface automatically. Approved carriers drop into your TMS in real time.</p>
+  </div>
+
+  <div class="kanban-frame">
+    <div class="kanban-h">
+      <div class="kanban-title-group">
+        <div class="kanban-title">Carrier Onboarding</div>
+        <div class="kanban-meta">PrimeFreight Logistics · 14 active · this week 38 onboarded</div>
+      </div>
+      <div class="kanban-actions">
+        <a class="kanban-btn">Filter</a>
+        <a class="kanban-btn">Export CSV</a>
+        <a class="kanban-btn purple">+ Invite carrier</a>
+      </div>
+    </div>
+
+    <div class="kanban-cols">
+
+      <!-- Column: Invited -->
+      <div class="kanban-col">
+        <div class="kanban-col-h">
+          <div class="kanban-col-name invited">Invited</div>
+          <div class="kanban-col-count">3</div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Heartland Trucking Co</div>
+            <div class="kanban-mc">MC-871923</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag muted">Email sent</span>
+          </div>
+          <div class="kanban-time"><span>Invited 14h ago</span><span>0/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Pacific Coast Carriers</div>
+            <div class="kanban-mc">MC-453219</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag muted">SMS reminder</span>
+          </div>
+          <div class="kanban-time"><span>Invited 2 days ago</span><span>0/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Atlas Movers Inc</div>
+            <div class="kanban-mc">MC-103482</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag muted">Awaiting open</span>
+          </div>
+          <div class="kanban-time"><span>Invited 1h ago</span><span>0/5</span></div>
+        </div>
+      </div>
+
+      <!-- Column: In Progress -->
+      <div class="kanban-col">
+        <div class="kanban-col-h">
+          <div class="kanban-col-name in-progress">In Progress</div>
+          <div class="kanban-col-count">5</div>
+        </div>
+        <div class="kanban-card priority">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Lone Star Hauling LLC</div>
+            <div class="kanban-mc">MC-728143</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag warn">COI pending</span>
+            <span class="kanban-tag success">W-9 ✓</span>
+            <span class="kanban-tag success">Agreement ✓</span>
+          </div>
+          <div class="kanban-time"><span>22 min idle</span><span>3/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Sunrise Transport</div>
+            <div class="kanban-mc">MC-619274</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">Identity ✓</span>
+            <span class="kanban-tag warn">E-sign pending</span>
+          </div>
+          <div class="kanban-time"><span>5 min idle</span><span>2/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Mid-Atlantic Freight</div>
+            <div class="kanban-mc">MC-238174</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg pending"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">All docs ✓</span>
+            <span class="kanban-tag warn">Final attest pending</span>
+          </div>
+          <div class="kanban-time"><span>1 min idle</span><span>4/5</span></div>
+        </div>
+      </div>
+
+      <!-- Column: Review -->
+      <div class="kanban-col">
+        <div class="kanban-col-h">
+          <div class="kanban-col-name review">Review</div>
+          <div class="kanban-col-count">3</div>
+        </div>
+        <div class="kanban-card flagged">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">National Trans Co.</div>
+            <div class="kanban-mc">MC-1284917</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg flagged"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag danger">3 fraud flags</span>
+            <span class="kanban-tag danger">Phone mismatch</span>
+            <span class="kanban-tag danger">Recent reincarnation</span>
+          </div>
+          <div class="kanban-time"><span style="color: var(--danger);">⚠ Block recommended</span><span>5/5</span></div>
+        </div>
+        <div class="kanban-card priority">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Eastern Logistics Group</div>
+            <div class="kanban-mc">MC-552108</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">All checks ✓</span>
+            <span class="kanban-tag muted">Awaiting your approval</span>
+          </div>
+          <div class="kanban-time"><span style="color: var(--accent-electric);">→ Ready to approve</span><span>5/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Western Star Trucking</div>
+            <div class="kanban-mc">MC-429381</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag warn">Insurance < 30 days</span>
+            <span class="kanban-tag muted">Manual review</span>
+          </div>
+          <div class="kanban-time"><span>34 min in review</span><span>5/5</span></div>
+        </div>
+      </div>
+
+      <!-- Column: Approved -->
+      <div class="kanban-col">
+        <div class="kanban-col-h">
+          <div class="kanban-col-name approved">Approved · today</div>
+          <div class="kanban-col-count">3</div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Roadrunner Express LLC</div>
+            <div class="kanban-mc">MC-921843</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">In TMS</span>
+            <span class="kanban-tag success">Monitoring on</span>
+          </div>
+          <div class="kanban-time"><span>Approved 2m ago</span><span>5/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Apex Freight Services</div>
+            <div class="kanban-mc">MC-672901</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">In TMS</span>
+            <span class="kanban-tag success">Monitoring on</span>
+          </div>
+          <div class="kanban-time"><span>Approved 1h ago</span><span>5/5</span></div>
+        </div>
+        <div class="kanban-card">
+          <div class="kanban-card-h">
+            <div class="kanban-carrier-name">Continental Cargo Inc</div>
+            <div class="kanban-mc">MC-187432</div>
+          </div>
+          <div class="kanban-progress">
+            <div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div><div class="kanban-progress-seg done"></div>
+          </div>
+          <div class="kanban-tags">
+            <span class="kanban-tag success">In TMS</span>
+            <span class="kanban-tag success">Monitoring on</span>
+          </div>
+          <div class="kanban-time"><span>Approved 3h ago</span><span>5/5</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PACKET WORKFLOW SPLIT VIEW -->
+<section class="charcoal">
+  <div class="section-head">
+    <div class="section-eyebrow">Carrier Setup Packet</div>
+    <h2>What you send.<br>What the <em>carrier sees</em>.</h2>
+    <p class="section-sub">Branded packets, sent in one click. Custom forms, your broker-carrier agreement, automatic COI requests to underwriters, e-signature, identity verification — all on the carrier's phone.</p>
+  </div>
+
+  <div class="packet-grid">
+
+    <div class="packet-side">
+      <div class="packet-side-h">
+        <div class="packet-side-tag broker">Broker view</div>
+        <div class="packet-side-name">PrimeFreight · Sending packet to Lone Star Hauling</div>
+      </div>
+      <div class="packet-body">
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Invite sent</div>
+            <div class="packet-step-meta">SMS + email · MC-728143 · Apr 28 9:14 AM</div>
+          </div>
+          <div class="packet-step-status done">delivered</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Identity verified</div>
+            <div class="packet-step-meta">EIN · phone · address · FMCSA match</div>
+          </div>
+          <div class="packet-step-status done">3 of 3 ✓</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">W-9 received</div>
+            <div class="packet-step-meta">Pre-filled from FleetAxis · 1 minute</div>
+          </div>
+          <div class="packet-step-status done">on file</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Broker-carrier agreement signed</div>
+            <div class="packet-step-meta">Your template · DocuSign-grade e-sig</div>
+          </div>
+          <div class="packet-step-status done">signed</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num">5</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">COI request sent to underwriter</div>
+            <div class="packet-step-meta">Progressive Commercial · ACORD 25 format</div>
+          </div>
+          <div class="packet-step-status active">awaiting</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num">6</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Final review & approval</div>
+            <div class="packet-step-meta">Auto-approve based on your rules · or manual</div>
+          </div>
+          <div class="packet-step-status pending">pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="packet-side">
+      <div class="packet-side-h">
+        <div class="packet-side-tag carrier">Carrier view</div>
+        <div class="packet-side-name">Lone Star Hauling · setup with PrimeFreight</div>
+      </div>
+      <div class="packet-body">
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Tap to start</div>
+            <div class="packet-step-meta">Mobile-first · no login required</div>
+          </div>
+          <div class="packet-step-status done">opened</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Confirm your business</div>
+            <div class="packet-step-meta">Pre-filled from FMCSA · just verify</div>
+          </div>
+          <div class="packet-step-status done">verified</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Your W-9</div>
+            <div class="packet-step-meta">Already on file · approved with one tap</div>
+          </div>
+          <div class="packet-step-status done">approved</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num done">✓</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Read & sign agreement</div>
+            <div class="packet-step-meta">Highlighted key terms · 4-min read</div>
+          </div>
+          <div class="packet-step-status done">signed</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num">5</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Authorize insurance request</div>
+            <div class="packet-step-meta">FleetAxis sends ACORD to your underwriter</div>
+          </div>
+          <div class="packet-step-status active">approve →</div>
+        </div>
+        <div class="packet-step">
+          <div class="packet-step-num">6</div>
+          <div class="packet-step-info">
+            <div class="packet-step-title">Done · ready to haul</div>
+            <div class="packet-step-meta">Setup saved · one-click for next broker</div>
+          </div>
+          <div class="packet-step-status pending">~2 min away</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FRAUD DETECTION -->
+<section>
+  <div class="section-head">
+    <div class="section-eyebrow">Fraud Detection</div>
+    <h2>The double-broker.<br>The phantom carrier.<br>The <em>fake COI</em>. Stopped.</h2>
+    <p class="section-sub">FleetAxis cross-references FMCSA changes, phone-verified contacts, IP/device fingerprints, and historical fraud signals across our entire network. Suspicious carriers get flagged in onboarding — before a load goes out.</p>
+  </div>
+
+  <div class="fraud-frame">
+    <div class="fraud-h">
+      <div class="fraud-h-title">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3l8 14H2L10 3z"/><path d="M10 8v4M10 14v.5"/></svg>
+        Fraud Risk Detected
+      </div>
+      <div class="fraud-h-meta">3 signals · Block recommended</div>
+    </div>
+    <div class="fraud-body">
+      <div class="fraud-carrier-h">
+        <div>
+          <div class="fraud-carrier-name">National Trans Co.</div>
+          <div class="fraud-carrier-meta">USDOT 5621093 · MC-1284917 · Houston, TX · Authority since 03/2026</div>
+        </div>
+        <div>
+          <div class="fraud-grade">F</div>
+          <div class="fraud-grade-label">RISK GRADE</div>
+        </div>
+      </div>
+
+      <div class="fraud-flags">
+        <div class="fraud-flag">
+          <div class="fraud-flag-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4l5 8 5-8"/><circle cx="8" cy="13" r="0.5"/></svg>
+          </div>
+          <div>
+            <div class="fraud-flag-title">Phone number reassignment detected</div>
+            <div class="fraud-flag-desc">FMCSA contact phone <strong>changed 4 days ago</strong>. New number registered to a VoIP provider, not associated with the prior business address. <strong>Common imposter pattern</strong>.</div>
+          </div>
+        </div>
+        <div class="fraud-flag">
+          <div class="fraud-flag-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><path d="M3 8h10M8 3v10"/></svg>
+          </div>
+          <div>
+            <div class="fraud-flag-title">Recent authority reincarnation</div>
+            <div class="fraud-flag-desc">EIN matches a prior carrier (USDOT 4128749) shut down for safety in 11/2025 with <strong>3 unsatisfied claims totaling $182,400</strong>. Reincarnated under new MC two months later.</div>
+          </div>
+        </div>
+        <div class="fraud-flag">
+          <div class="fraud-flag-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="10" height="10"/><path d="M5 5l6 6M11 5l-6 6"/></svg>
+          </div>
+          <div>
+            <div class="fraud-flag-title">COI inconsistency</div>
+            <div class="fraud-flag-desc">Submitted certificate names <strong>broker as additional insured</strong> but the policy number does not match the underwriter's records. ACORD lookup with Progressive returned <strong>no active policy</strong> at that VIN list.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fraud-actions">
+        <a class="fraud-action-btn danger">Block · Add to network watchlist</a>
+        <a class="fraud-action-btn muted">Manually review · Override</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTINUOUS MONITORING -->
+<section class="charcoal">
+  <div class="monitor-grid">
+    <div class="copy-block">
+      <div class="section-eyebrow" style="text-align: left;">Continuous Monitoring</div>
+      <h3>Onboarding doesn't end at <em>approval</em>.</h3>
+      <p>FleetAxis watches every approved carrier 24/7. The minute a carrier's authority lapses, insurance expires, or FMCSA flips a safety rating — your team gets pinged. Before a load gets booked. Before a claim happens.</p>
+      <ul class="feature-list">
+        <li><strong>Live FMCSA sync.</strong> Authority status, safety rating, OOS rate — checked hourly.</li>
+        <li><strong>Insurance heartbeat.</strong> Direct underwriter integration. Cancellation notifications in real time.</li>
+        <li><strong>Identity drift alerts.</strong> Phone, address, EIN, or contact name changes flagged immediately.</li>
+        <li><strong>CSA score deltas.</strong> Intervention thresholds, BASIC scores, recent inspections.</li>
+        <li><strong>Network signals.</strong> If another broker on FleetAxis flags a carrier, your team finds out.</li>
+      </ul>
+    </div>
+
+    <div class="monitor-mockup">
+      <div class="monitor-mockup-h">
+        <div class="monitor-mockup-title">Live monitoring · last 24 hours</div>
+        <div class="monitor-mockup-meta">12 events</div>
+      </div>
+      <div class="monitor-event">
+        <div class="monitor-event-icon danger">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4l10 8M13 4l-10 8"/></svg>
+        </div>
+        <div>
+          <div class="monitor-event-title">Heartland Trucking · BIPD insurance cancelled</div>
+          <div class="monitor-event-meta">Progressive Commercial · effective immediately</div>
+        </div>
+        <div class="monitor-event-time" style="color: var(--danger);">8m ago</div>
+      </div>
+      <div class="monitor-event">
+        <div class="monitor-event-icon warn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>
+        </div>
+        <div>
+          <div class="monitor-event-title">Continental Cargo · COI renewing in 14 days</div>
+          <div class="monitor-event-meta">Auto-request will fire on day 7</div>
+        </div>
+        <div class="monitor-event-time">2h ago</div>
+      </div>
+      <div class="monitor-event">
+        <div class="monitor-event-icon purple">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="5.5"/><path d="M3 8h10M8 3c2 1.5 2 8.5 0 10c-2-1.5-2-8.5 0-10"/></svg>
+        </div>
+        <div>
+          <div class="monitor-event-title">Lone Star Hauling · MCS-150 update filed</div>
+          <div class="monitor-event-meta">FMCSA · biennial update current</div>
+        </div>
+        <div class="monitor-event-time">5h ago</div>
+      </div>
+      <div class="monitor-event">
+        <div class="monitor-event-icon warn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 3v10M3 8h10"/></svg>
+        </div>
+        <div>
+          <div class="monitor-event-title">Eastern Logistics · CSA Unsafe Driving alert</div>
+          <div class="monitor-event-meta">BASIC score now 72 (intervention threshold 65)</div>
+        </div>
+        <div class="monitor-event-time">9h ago</div>
+      </div>
+      <div class="monitor-event">
+        <div class="monitor-event-icon success">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8l3 3 7-7"/></svg>
+        </div>
+        <div>
+          <div class="monitor-event-title">Apex Freight · Roadside inspection clean</div>
+          <div class="monitor-event-meta">CO · Driver Reeves · no violations</div>
+        </div>
+        <div class="monitor-event-time">14h ago</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section>
+  <div class="section-head">
+    <div class="section-eyebrow">Integrations</div>
+    <h2>Plays nicely with your <em>existing TMS</em>.</h2>
+    <p class="section-sub">Approved carriers drop directly into your TMS. Rate cons sync. Carrier records stay in lockstep. No double entry.</p>
+  </div>
+
+  <div class="integrations-grid">
+    <div class="integration-card">
+      <div class="integration-name">McLeod PowerBroker</div>
+      <div class="integration-type">TMS</div>
+      <span class="integration-status">Connected</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">Aljex</div>
+      <div class="integration-type">TMS</div>
+      <span class="integration-status">Connected</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">Tai Software</div>
+      <div class="integration-type">TMS</div>
+      <span class="integration-status">Connected</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">Revenova</div>
+      <div class="integration-type">TMS</div>
+      <span class="integration-status">Connected</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">Progressive Commercial</div>
+      <div class="integration-type">Insurance</div>
+      <span class="integration-status">ACORD live</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">Sentry Insurance</div>
+      <div class="integration-type">Insurance</div>
+      <span class="integration-status">ACORD live</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">FMCSA SAFER</div>
+      <div class="integration-type">Government</div>
+      <span class="integration-status">Live sync</span>
+    </div>
+    <div class="integration-card">
+      <div class="integration-name">DocuSign</div>
+      <div class="integration-type">E-signature</div>
+      <span class="integration-status">Connected</span>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 36px; font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-faint);">
+    Plus REST API & webhooks for everything else · 60+ integrations available
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="cta-inner">
+    <div class="section-eyebrow">Get started</div>
+    <h2>See FleetAxis on <em>your</em> pipeline.</h2>
+    <p class="section-sub" style="margin-top: 16px;">
+      15-minute walkthrough with one of our team. We'll plug your existing carrier list into FleetAxis live and show you what surfaces.
+    </p>
+    <div class="cta-form">
+      <input type="email" placeholder="Work email" />
+      <button>Book demo →</button>
+    </div>
+    <div class="cta-tag">No card · No commitment · See the product before you decide</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="/" class="logo" style="font-size: 20px;">
+        <img class="logo-mark" src="logo.png" alt="FleetAxis" width="28" height="28" style="border-radius: 6px;">
+        FleetAxis
+      </a>
+      <p class="footer-tag">Unified Transportation Compliance. The single platform where carriers, brokers, and shippers manage every filing — and verify each other before a load ever moves.</p>
+    </div>
+    <div class="footer-col">
+      <h4>For Brokers</h4>
+      <ul>
+        <li><a href="#">Carrier onboarding</a></li>
+        <li><a href="#">Fraud detection</a></li>
+        <li><a href="#">Continuous monitoring</a></li>
+        <li><a href="#">TMS integrations</a></li>
+        <li><a href="#">API & webhooks</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Other roles</h4>
+      <ul>
+        <li><a href="#">For Carriers</a></li>
+        <li><a href="#">For Shippers</a></li>
+        <li><a href="#">For Hazmat & Specialty</a></li>
+        <li><a href="#">For Passenger Carriers</a></li>
+        <li><a href="#">For Service Providers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Trusted Network</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 FleetAxis · Independent compliance platform · Not affiliated with the FMCSA, USDOT, or any government agency.</span>
+    <span>Built for the road</span>
+  </div>
+</footer>
+
+</body>
+</html>
