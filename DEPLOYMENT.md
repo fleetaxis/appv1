@@ -160,7 +160,9 @@ Before deploying, we need to give Vercel your FMCSA webkey safely.
 2. Add a variable:
    - Name: `FMCSA_WEBKEY`
    - Value: paste your FMCSA webkey here
+   - Environments: check **Production**, **Preview**, and **Development** if Vercel asks
 3. Click **"Add"**
+4. If you add or change this after a deploy, go to **Deployments** and **Redeploy** so the serverless function receives the new value
 
 (We'll add the database variables in the next phase.)
 
@@ -171,7 +173,7 @@ Before deploying, we need to give Vercel your FMCSA webkey safely.
 3. Vercel will show a celebration screen with confetti
 4. Note the URL it gives you — something like `fleetaxis-app.vercel.app`
 
-**Visit that URL.** You should see your homepage. Try a lookup with USDOT 2589042. **It might fail** because we haven't added the database yet — that's expected. We'll fix it next.
+**Visit that URL.** You should see your homepage. Try a lookup with USDOT 2589042. Carrier lookup should work as soon as `FMCSA_WEBKEY` is present; the database setup below is only needed for newsletter signups, saved carriers, and lookup logging.
 
 ---
 
@@ -278,12 +280,17 @@ If all four tests pass — you're live with a real backend. 🎉
 
 ## What if something breaks?
 
+### "Lookup service is not configured" or `FMCSA_WEBKEY` error
+The serverless lookup function cannot call FMCSA until Vercel has the webkey in its environment. Check:
+1. Vercel → Project → Settings → Environment Variables → `FMCSA_WEBKEY` is set for the environment you deployed to (Production and/or Preview)
+2. The variable name is exact: `FMCSA_WEBKEY` (no spaces, no lowercase-only variant)
+3. After adding or changing the key, go to Deployments → three-dot menu → Redeploy
+
 ### "Carrier not found" for a valid USDOT
 Your FMCSA webkey may not be active yet, or it's wrong. Check:
-1. Vercel → Settings → Environment Variables → `FMCSA_WEBKEY` is set
-2. Try the FMCSA API directly in browser:
+1. Try the FMCSA API directly in browser:
    `https://mobile.fmcsa.dot.gov/qc/services/carriers/2589042?webKey=YOURKEYHERE`
-3. If that returns data in browser but your site doesn't, redeploy
+2. If that returns data in browser but your site doesn't, confirm the Vercel environment variable and redeploy
 
 ### Newsletter signup says "Network error"
 1. Vercel → Storage — is the DB created?
