@@ -9,7 +9,7 @@
 // email is already subscribed (don't leak which emails are on file — that
 // would be a privacy issue and a way for bots to enumerate emails).
 
-import { sql } from '@vercel/postgres';
+import { sql } from '../lib/db.js';
 
 // Basic email format check. Not perfect, but catches obvious garbage.
 function isValidEmail(email) {

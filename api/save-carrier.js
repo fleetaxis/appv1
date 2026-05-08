@@ -12,7 +12,7 @@
 // Once we add proper user accounts (next milestone), we'll migrate this
 // to use user_id and merge the saved_carriers rows.
 
-import { sql } from '@vercel/postgres';
+import { sql } from '../lib/db.js';
 
 function isValidEmail(email) {
   if (!email || typeof email !== 'string') return false;
