@@ -8,7 +8,7 @@
 // Returns normalized carrier data combining identity, BASIC scores,
 // cargo, operation classification, and authority status.
 
-import { MissingFmcsaWebKeyError, lookupByDOT, lookupByMC } from '../lib/fmcsa.js';
+import { FmcsaAuthenticationError, MissingFmcsaWebKeyError, lookupByDOT, lookupByMC } from '../lib/fmcsa.js';
 
 function getRequestUrl(request) {
   const forwardedProto = request.headers['x-forwarded-proto']?.split(',')[0]?.trim();
@@ -51,16 +51,19 @@ export default async function handler(request, response) {
 
   try {
     let result;
+    let queryLabel;
     if (usdot) {
+      queryLabel = `USDOT ${usdot}`;
       result = await lookupByDOT(usdot);
     } else {
+      queryLabel = `MC-${mc}`;
       result = await lookupByMC(mc);
     }
 
     if (!result) {
       return response.status(404).json({
         error: 'Carrier not found',
-        query: usdot ? `USDOT ${usdot}` : `MC-${mc}`,
+        query: queryLabel,
       });
     }
 
@@ -78,6 +81,15 @@ export default async function handler(request, response) {
         code: err.code,
         message: 'Carrier lookup is missing its FMCSA webkey. Add FMCSA_WEBKEY in Vercel Project Settings → Environment Variables, then redeploy.',
         requiredEnvironmentVariables: err.envNames,
+      });
+    }
+
+    if (err instanceof FmcsaAuthenticationError || err.code === 'FMCSA_AUTHENTICATION_FAILED') {
+      console.error('Lookup authentication error:', err.message);
+      return response.status(503).json({
+        error: 'Lookup service authentication failed',
+        code: err.code,
+        message: 'FMCSA rejected the configured webkey. Verify the value of FMCSA_WEBKEY in Vercel Project Settings → Environment Variables, then redeploy.',
       });
     }
 

@@ -1353,16 +1353,24 @@
     button.innerHTML = '<span style="font-family: Geist Mono, monospace; font-size: 12px;">Looking up…</span>';
 
     try {
-      // Build query — strip any non-digits for cleanliness
+      // Build query — strip any non-digits for cleanliness. If the user types
+      // an explicit MC prefix while the USDOT tab is selected, honor the prefix
+      // instead of sending the number as a USDOT lookup.
       const numeric = inputValue.replace(/\D/g, '');
-      const url = mode === 'usdot'
+      const isExplicitMc = /^\s*MC[-\s]?/i.test(inputValue);
+      const queryMode = isExplicitMc ? 'mc' : mode;
+      const url = queryMode === 'usdot'
         ? `/api/lookup?usdot=${encodeURIComponent(numeric)}`
         : `/api/lookup?mc=${encodeURIComponent(numeric)}`;
+
+      if (queryMode !== mode) {
+        setMode(queryMode);
+      }
 
       const resp = await fetch(url);
 
       if (resp.status === 404) {
-        showError(`Carrier not found. Double-check the ${mode === 'usdot' ? 'USDOT' : 'MC'} number.`);
+        showError(`Carrier not found. Double-check the ${queryMode === 'usdot' ? 'USDOT' : 'MC'} number.`);
         return;
       }
 
