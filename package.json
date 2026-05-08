@@ -1,0 +1,17 @@
+{
+  "name": "fleetaxis",
+  "version": "0.1.0",
+  "description": "FleetAxis — Unified Transportation Compliance Platform",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build needed for static site'",
+    "start": "vercel dev"
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.10.0"
+  }
+}
