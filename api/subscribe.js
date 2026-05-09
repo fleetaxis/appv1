@@ -9,7 +9,7 @@
 // email is already subscribed (don't leak which emails are on file — that
 // would be a privacy issue and a way for bots to enumerate emails).
 
-import { sql } from '../lib/db.js';
+import { ensureSubscribersTable, sql } from '../lib/db.js';
 
 // Basic email format check. Not perfect, but catches obvious garbage.
 function isValidEmail(email) {
@@ -49,7 +49,7 @@ export default async function handler(request, response) {
     await ensureSubscribersTable();
 
     // Insert. ON CONFLICT means if email already exists, do nothing (no error).
-    await db`
+    await sql`
       INSERT INTO subscribers (email, source, context_dot_number, ip_address, user_agent)
       VALUES (${cleanEmail}, ${source}, ${context_dot_number}, ${ip}, ${userAgent})
       ON CONFLICT (email) DO NOTHING
