@@ -297,20 +297,6 @@
   .lookup-button svg { width: 16px; height: 16px; }
   .lookup-button:disabled { opacity: 0.6; cursor: wait; }
 
-  .lookup-helper {
-    margin-top: 14px;
-    font-family: 'Geist Mono', monospace;
-    font-size: 11px;
-    color: var(--text-faint);
-    letter-spacing: 0.05em;
-  }
-  .lookup-helper a {
-    color: var(--accent-electric);
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .lookup-helper a:hover { text-decoration: underline; }
-
   @media (max-width: 640px) {
     .hero { padding: 100px 16px 50px; }
     h1.headline { font-size: 36px; }
@@ -1031,7 +1017,6 @@
     .lookup-input-wrap { flex-direction: column; }
     .lookup-input { padding: 14px 16px; font-size: 16px; }
     .lookup-button { padding: 14px; justify-content: center; }
-    .lookup-helper { font-size: 10px; padding: 0 8px; }
 
     /* Dashboard wrapper */
     .dashboard { padding: 28px 12px 40px; }
@@ -1194,7 +1179,7 @@
           type="text"
           class="lookup-input"
           id="lookupInput"
-          placeholder="Enter USDOT number (e.g. 2589042)"
+          placeholder="Enter USDOT number"
           autocomplete="off"
           inputmode="numeric"
         />
@@ -1207,9 +1192,6 @@
         </button>
       </div>
 
-      <div class="lookup-helper">
-        Try a sample: <a onclick="loadDemo('2589042')">USDOT 2589042</a> &nbsp;·&nbsp; <a onclick="loadDemo('mc-907873')">MC-907873</a>
-      </div>
     </form>
   </div>
 </section>
@@ -1334,9 +1316,9 @@
     });
     const input = document.getElementById('lookupInput');
     if (newMode === 'usdot') {
-      input.placeholder = 'Enter USDOT number (e.g. 2589042)';
+      input.placeholder = 'Enter USDOT number';
     } else {
-      input.placeholder = 'Enter MC number (e.g. 907873 or MC-907873)';
+      input.placeholder = 'Enter MC number';
     }
     input.focus();
   }
@@ -1393,12 +1375,6 @@
     }
   }
 
-  // ---------- DEMO LOAD (sample buttons) ----------
-  function loadDemo(value) {
-    document.getElementById('lookupInput').value = value;
-    setMode(value.toLowerCase().startsWith('mc') ? 'mc' : 'usdot');
-    document.getElementById('lookupForm').requestSubmit();
-  }
 
   // ---------- ERROR DISPLAY ----------
   function showError(message) {
