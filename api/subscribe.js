@@ -46,8 +46,10 @@ export default async function handler(request, response) {
       || null;
     const userAgent = request.headers['user-agent'] || null;
 
+    await ensureSubscribersTable();
+
     // Insert. ON CONFLICT means if email already exists, do nothing (no error).
-    await sql`
+    await db`
       INSERT INTO subscribers (email, source, context_dot_number, ip_address, user_agent)
       VALUES (${cleanEmail}, ${source}, ${context_dot_number}, ${ip}, ${userAgent})
       ON CONFLICT (email) DO NOTHING
