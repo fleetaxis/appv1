@@ -2,8 +2,8 @@
 //
 // FleetAxis Carrier Lookup Endpoint
 // =================================
-// GET /api/lookup?usdot=2589042
-// GET /api/lookup?mc=907873
+// GET /api/lookup?usdot=NUMBER
+// GET /api/lookup?mc=NUMBER
 
 import {
   FmcsaAuthenticationError,
@@ -63,8 +63,7 @@ export default async function handler(request, response) {
 
       // Users often paste an MC docket number into the default USDOT tab. If a
       // numeric USDOT lookup misses, try the same number as an MC docket before
-      // surfacing a 404. This fixes cases such as /api/lookup?usdot=1031013
-      // when the intended identifier is MC-1031013.
+      // surfacing a 404.
       if (!result) {
         result = await lookupByMC(query.value);
         if (result) queryLabel = `MC-${query.value}`;
