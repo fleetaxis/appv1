@@ -179,16 +179,16 @@ Before deploying, we need to give Vercel your FMCSA webkey safely.
 
 ## Phase 4 — Set up the database (15 minutes)
 
-### Step 4.1 — Create the Postgres database
+### Step 4.1 — Create the Neon Postgres database
 
 1. In your Vercel project, click the **"Storage"** tab at the top
 2. Click **"Create Database"**
-3. Select **"Postgres"** (free tier)
+3. Select **"Neon"** (Postgres) from the Vercel Marketplace
 4. Name: `fleetaxis-db`
 5. Region: pick whatever's closest to you
-6. Click **"Create"**
+6. Click **"Create"** and connect it to this project
 
-Vercel will set up the database (takes ~30 seconds) and automatically connect it to your project.
+Vercel will connect the Neon database to your project and add a Postgres connection string such as `DATABASE_URL` (legacy projects may still expose `POSTGRES_URL`). The app accepts either variable.
 
 ### Step 4.2 — Initialize the schema
 
@@ -204,7 +204,7 @@ The 3 tables (`subscribers`, `saved_carriers`, `lookup_log`) now exist.
 
 ### Step 4.3 — Redeploy
 
-The database environment variables were auto-added to your project. Trigger a redeploy:
+After the database environment variables are connected to your project, trigger a redeploy:
 
 1. Go to **Deployments** tab
 2. Find the most recent deployment
