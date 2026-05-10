@@ -1400,12 +1400,18 @@
 
     // Status badge logic — show the carrier's MCMIS status from FMCSA and
     // only mark Out of Service when FMCSA explicitly flags OOS.
-    const mcmisStatus = c.mcmisStatus || (c.statusCode === 'A' ? 'Active' : c.statusCode === 'I' ? 'Inactive' : 'Unknown');
+    const rawMcmisStatus = c.mcmisStatus || (c.statusCode === 'A' ? 'Active' : c.statusCode === 'I' ? 'Inactive' : 'Unknown');
+    const normalizedMcmisStatus = String(rawMcmisStatus).trim();
+    const mcmisStatus = /^active$/i.test(normalizedMcmisStatus)
+      ? 'Active'
+      : /^inactive$/i.test(normalizedMcmisStatus)
+        ? 'Inactive'
+        : normalizedMcmisStatus || 'Unknown';
     const allowedToOperate = String(c.allowedToOperate || '').toUpperCase();
     const outOfService = String(c.outOfService || '').toUpperCase();
     const isOOS = outOfService === 'Y' || /out\s+of\s+service/i.test(mcmisStatus);
     const isActive = /active|authorized/i.test(mcmisStatus) && !/inactive|not\s+authorized/i.test(mcmisStatus);
-    let statusLabel = `MCMIS: ${mcmisStatus}`;
+    let statusLabel = mcmisStatus;
     let statusClass = 'active';
     if (isOOS) {
       statusClass = 'danger';
