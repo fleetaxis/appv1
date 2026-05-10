@@ -1398,16 +1398,18 @@
     const operation = data.operation || [];
     const authority = data.authority || {};
 
-    // Status badge logic
-    const isActive = c.statusCode === 'A' && c.allowedToOperate === 'Y';
-    const isOOS = !!c.outOfServiceDate;
-    let statusLabel = 'Active · Authorized';
+    // Status badge logic — show the carrier's MCMIS status from FMCSA and
+    // only mark Out of Service when FMCSA explicitly flags OOS.
+    const mcmisStatus = c.mcmisStatus || (c.statusCode === 'A' ? 'Active' : c.statusCode === 'I' ? 'Inactive' : 'Unknown');
+    const allowedToOperate = String(c.allowedToOperate || '').toUpperCase();
+    const outOfService = String(c.outOfService || '').toUpperCase();
+    const isOOS = outOfService === 'Y' || /out\s+of\s+service/i.test(mcmisStatus);
+    const isActive = /active|authorized/i.test(mcmisStatus) && !/inactive|not\s+authorized/i.test(mcmisStatus);
+    let statusLabel = `MCMIS: ${mcmisStatus}`;
     let statusClass = 'active';
     if (isOOS) {
-      statusLabel = 'Out of Service';
       statusClass = 'danger';
-    } else if (!isActive) {
-      statusLabel = c.statusCode === 'A' ? 'Active · Not Authorized' : 'Inactive';
+    } else if (!isActive || allowedToOperate === 'N') {
       statusClass = 'warn';
     }
 
