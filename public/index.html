@@ -1253,6 +1253,288 @@
   </div>
 </section>
 
+<!-- FleetAxis — Service Interest Form -->
+<section class="services-section" id="services" style="padding: 100px 48px 60px; max-width: 1100px; margin: 0 auto;">
+
+  <div class="section-eyebrow" style="text-align: center; margin-bottom: 16px;">
+    <span style="display: inline-flex; align-items: center; gap: 8px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--accent-electric); letter-spacing: 0.18em; text-transform: uppercase;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-electric);"></span>
+      Services & Early Access
+    </span>
+  </div>
+
+  <h2 style="font-size: clamp(28px, 4vw, 48px); font-weight: 600; text-align: center; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 14px;">
+    Need help <em style="font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--accent-electric);">now</em>? Or interested in <em style="font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--accent-electric);">FleetAxis</em>?
+  </h2>
+
+  <p style="font-size: 17px; color: var(--text-dim); text-align: center; max-width: 580px; margin: 0 auto 50px; line-height: 1.55;">
+    Hands-on compliance services available immediately, plus early access to the FleetAxis platform when it launches.
+  </p>
+
+  <form
+    id="serviceForm"
+    action="https://api.web3forms.com/submit"
+    method="POST"
+    style="background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 22px; padding: 40px; position: relative; overflow: hidden;"
+  >
+    <!-- Web3Forms hidden fields -->
+    <input type="hidden" name="access_key" value="d81beb3f-b03b-4141-a7af-ec5f12244c91">
+    <input type="hidden" name="from_name" value="FleetAxis Service Form">
+    <input type="hidden" name="subject" value="New Service Request — FleetAxis">
+    <input type="checkbox" name="botcheck" id="botcheck" style="display:none">
+
+    <!-- Service category selector -->
+    <div style="margin-bottom: 32px;">
+      <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 14px;">
+        I'm interested in:
+      </label>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;" id="categoryButtons">
+        <button type="button" data-category="consulting" class="category-btn" onclick="selectCategory('consulting')"
+          style="padding: 18px; background: var(--bg-charcoal); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); cursor: pointer; transition: all 0.2s; text-align: left;">
+          <div style="font-weight: 600; font-size: 15px; margin-bottom: 4px;">Get help <em style="font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent-electric);">now</em></div>
+          <div style="font-size: 12px; color: var(--text-dim);">MCS-150, authority setup, audits, consulting</div>
+        </button>
+        <button type="button" data-category="saas" class="category-btn" onclick="selectCategory('saas')"
+          style="padding: 18px; background: var(--bg-charcoal); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); cursor: pointer; transition: all 0.2s; text-align: left;">
+          <div style="font-weight: 600; font-size: 15px; margin-bottom: 4px;">Join <em style="font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent-electric);">FleetAxis</em> beta</div>
+          <div style="font-size: 12px; color: var(--text-dim);">Get early access when the platform launches</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden until category chosen -->
+    <div id="formBody" style="display: none;">
+
+      <!-- Service-specific selector -->
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px;">
+          Service
+        </label>
+
+        <!-- Consulting services -->
+        <select name="service" id="serviceSelect" required
+          style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 14px 16px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+          <option value="">Choose a service…</option>
+        </select>
+      </div>
+
+      <!-- Common fields -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+            Name *
+          </label>
+          <input type="text" name="name" required
+            style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+        </div>
+        <div>
+          <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+            Email *
+          </label>
+          <input type="email" name="email" required
+            style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+            Company
+          </label>
+          <input type="text" name="company"
+            style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+        </div>
+        <div>
+          <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+            Phone
+          </label>
+          <input type="tel" name="phone"
+            style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+        </div>
+      </div>
+
+      <!-- Consulting-only fields -->
+      <div id="consultingFields" style="display: none; margin-bottom: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div>
+            <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+              USDOT Number
+            </label>
+            <input type="text" name="usdot"
+              style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+          </div>
+          <div>
+            <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+              MC Number
+            </label>
+            <input type="text" name="mc"
+              style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+          </div>
+        </div>
+      </div>
+
+      <!-- SaaS-only field -->
+      <div id="saasFields" style="display: none; margin-bottom: 16px;">
+        <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+          Fleet Size
+        </label>
+        <select name="fleet_size"
+          style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif;">
+          <option value="">Select fleet size…</option>
+          <option value="1">1 truck (Owner-Op)</option>
+          <option value="2-10">2–10 trucks</option>
+          <option value="11-50">11–50 trucks</option>
+          <option value="51-200">51–200 trucks</option>
+          <option value="200+">200+ trucks</option>
+          <option value="broker">I'm a broker / freight forwarder</option>
+          <option value="shipper">I'm a shipper</option>
+          <option value="service_provider">I'm a service provider (factor, ELD, etc.)</option>
+        </select>
+      </div>
+
+      <!-- Notes -->
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">
+          Anything else?
+        </label>
+        <textarea name="notes" rows="3" placeholder="Optional — context, questions, deadline, etc."
+          style="width: 100%; background: var(--bg); border: 1.5px solid var(--border-strong); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: 'Geist', sans-serif; resize: vertical;"></textarea>
+      </div>
+
+      <!-- Submit button -->
+      <button type="submit"
+        style="width: 100%; background: var(--accent); color: white; border: none; padding: 16px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.2s; font-family: 'Geist', sans-serif;">
+        Send →
+      </button>
+
+      <p style="text-align: center; margin-top: 16px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-faint); letter-spacing: 0.05em;">
+        We typically respond within 1 business day.
+      </p>
+    </div>
+
+    <!-- Success message (hidden until form submitted) -->
+    <div id="formSuccess" style="display: none; text-align: center; padding: 40px 20px;">
+      <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+      <div style="font-size: 22px; font-weight: 600; margin-bottom: 8px;">Got it.</div>
+      <div style="color: var(--text-dim); font-size: 15px;">We'll be in touch within 1 business day.</div>
+    </div>
+  </form>
+</section>
+
+<script>
+  // ===== Service Form Logic =====
+  const consultingServices = [
+    { value: 'mcs150', label: 'MCS-150 Biennial Update — $99' },
+    { value: 'authority', label: 'New USDOT Authority Setup — $599' },
+    { value: 'ifta', label: 'IFTA Quarterly Filing — $99/quarter' },
+    { value: 'irp', label: 'IRP Annual Renewal — $199+' },
+    { value: 'csa_audit', label: 'CSA Score Audit + DataQ Challenge — $299' },
+    { value: 'dq_audit', label: 'Driver Qualification File Audit — $199/driver' },
+    { value: 'carrier_packet', label: 'Carrier Setup Packet Completion — $35/packet' },
+    { value: 'invoicing', label: 'Invoicing Service — $79/mo (up to 25 invoices)' },
+    { value: 'consulting_hour', label: 'Compliance Consulting (1 hour) — $125' },
+    { value: 'other_consulting', label: 'Other compliance help — let\'s talk' }
+  ];
+
+  const saasServices = [
+    { value: 'owner_op', label: 'Owner-Operator tier — $39/mo' },
+    { value: 'carrier', label: 'Motor Carrier tier — $99/mo' },
+    { value: 'hazmat', label: 'Hazmat Carrier tier — $149/mo' },
+    { value: 'passenger', label: 'Passenger Carrier tier — $129/mo' },
+    { value: 'broker', label: 'Broker tier — $199/mo' },
+    { value: 'shipper', label: 'Shipper — Custom pricing' },
+    { value: 'service_provider', label: 'Service Provider listing — from $79/mo' },
+    { value: 'just_curious', label: 'Just want updates' }
+  ];
+
+  function selectCategory(category) {
+    // Highlight selected button
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      if (btn.dataset.category === category) {
+        btn.style.borderColor = 'var(--accent-bright)';
+        btn.style.background = 'rgba(124, 58, 237, 0.12)';
+      } else {
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'var(--bg-charcoal)';
+      }
+    });
+
+    // Set hidden field for category
+    let catInput = document.getElementById('categoryHidden');
+    if (!catInput) {
+      catInput = document.createElement('input');
+      catInput.type = 'hidden';
+      catInput.name = 'category';
+      catInput.id = 'categoryHidden';
+      document.getElementById('serviceForm').appendChild(catInput);
+    }
+    catInput.value = category;
+
+    // Populate service dropdown
+    const select = document.getElementById('serviceSelect');
+    select.innerHTML = '<option value="">Choose a service…</option>';
+    const services = category === 'consulting' ? consultingServices : saasServices;
+    services.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.value;
+      opt.textContent = s.label;
+      select.appendChild(opt);
+    });
+
+    // Show/hide conditional fields
+    document.getElementById('consultingFields').style.display = category === 'consulting' ? 'block' : 'none';
+    document.getElementById('saasFields').style.display = category === 'saas' ? 'block' : 'none';
+
+    // Show form body
+    document.getElementById('formBody').style.display = 'block';
+  }
+
+  // Handle form submission with AJAX so user stays on page
+  document.getElementById('serviceForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    // Convert to JSON for Web3Forms
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    const button = form.querySelector('button[type="submit"]');
+    const originalText = button.textContent;
+    button.textContent = 'Sending…';
+    button.disabled = true;
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Show success state
+        document.getElementById('formBody').style.display = 'none';
+        document.querySelectorAll('.category-btn').forEach(btn => btn.style.display = 'none');
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        button.textContent = originalText;
+        button.disabled = false;
+        alert('Something went wrong. Please try again or email info@fleetaxis.com directly.');
+      }
+    } catch (err) {
+      button.textContent = originalText;
+      button.disabled = false;
+      alert('Network error. Please try again or email info@fleetaxis.com directly.');
+    }
+  });
+</script>
+
+
 <!-- ============ NEWSLETTER ============ -->
 <section class="newsletter" id="newsletter">
   <div class="newsletter-inner">
