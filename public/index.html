@@ -1680,26 +1680,23 @@
     const operation = data.operation || [];
     const authority = data.authority || {};
 
-    // Status badge logic — show the carrier's MCMIS status from FMCSA and
-    // only mark Out of Service when FMCSA explicitly flags OOS.
-    const rawMcmisStatus = c.mcmisStatus || (c.statusCode === 'A' ? 'Active' : c.statusCode === 'I' ? 'Inactive' : 'Unknown');
-    const normalizedMcmisStatus = String(rawMcmisStatus).trim();
-    const mcmisStatus = /^active$/i.test(normalizedMcmisStatus)
-      ? 'Active'
-      : /^inactive$/i.test(normalizedMcmisStatus)
-        ? 'Inactive'
-        : normalizedMcmisStatus || 'Unknown';
+    // Status badge logic — show the USDOT status and FMCSA operating
+    // authority status from the public Carrier Snapshot where available.
+    const mcmisStatus = c.mcmisStatus || (c.statusCode === 'A' ? 'Active' : c.statusCode === 'I' ? 'Inactive' : 'Unknown');
     const allowedToOperate = String(c.allowedToOperate || '').toUpperCase();
+    const operatingAuthorityStatus = c.operatingAuthorityStatus || '';
     const outOfService = String(c.outOfService || '').toUpperCase();
     const isOOS = outOfService === 'Y' || /out\s+of\s+service/i.test(mcmisStatus);
-    const isActive = /active|authorized/i.test(mcmisStatus) && !/inactive|not\s+authorized/i.test(mcmisStatus);
-    let statusLabel = mcmisStatus;
+    const isActive = /active/i.test(mcmisStatus) && !/inactive/i.test(mcmisStatus);
+    let statusLabel = `USDOT: ${mcmisStatus}`;
     let statusClass = 'active';
     if (isOOS) {
       statusClass = 'danger';
-    } else if (!isActive || allowedToOperate === 'N') {
+    } else if (!isActive) {
       statusClass = 'warn';
     }
+
+    const authorityStatusLabel = operatingAuthorityStatus || (allowedToOperate === 'Y' ? 'AUTHORIZED' : allowedToOperate === 'N' ? 'NOT AUTHORIZED' : '—');
 
     // Authority rows — show the four standard categories
     const authRows = [
@@ -1809,6 +1806,10 @@
             </div>
           </div>
           <div class="authority-list">
+            <div class="authority-row ${authorityStatusLabel === '—' ? 'inactive' : ''}">
+              <div class="authority-type">FMCSA Authority Status</div>
+              <div class="authority-value">${escapeHtml(authorityStatusLabel)}</div>
+            </div>
             ${authRows.map(r => `
               <div class="authority-row ${r.authorized ? '' : 'inactive'}">
                 <div class="authority-type">${escapeHtml(r.label)}</div>
