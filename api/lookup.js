@@ -56,18 +56,10 @@ export default async function handler(request, response) {
 
   try {
     let result;
-    let queryLabel = query.label;
+    const queryLabel = query.label;
 
     if (query.type === 'usdot') {
       result = await lookupByDOT(query.value);
-
-      // Users often paste an MC docket number into the default USDOT tab. If a
-      // numeric USDOT lookup misses, try the same number as an MC docket before
-      // surfacing a 404.
-      if (!result) {
-        result = await lookupByMC(query.value);
-        if (result) queryLabel = `MC-${query.value}`;
-      }
     } else {
       result = await lookupByMC(query.value);
     }
